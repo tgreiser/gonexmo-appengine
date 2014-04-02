@@ -1,6 +1,8 @@
 package nexmo
 
 import (
+	"appengine"
+	"appengine/urlfetch"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -87,7 +89,7 @@ type MessageResponse struct {
 }
 
 // Send the message using the specified SMS client.
-func (c *SMS) Send(msg *SMSMessage) (*MessageResponse, error) {
+func (c *SMS) Send(aec appengine.Context, msg *SMSMessage) (*MessageResponse, error) {
 	if len(msg.From) <= 0 {
 		return nil, errors.New("Invalid From field specified")
 	}
@@ -165,7 +167,7 @@ func (c *SMS) Send(msg *SMSMessage) (*MessageResponse, error) {
 	values.Set("to", msg.To)
 	values.Set("from", msg.From)
 
-	client := &http.Client{}
+	client := urlfetch.Client(aec)
 	valuesReader := bytes.NewReader([]byte(values.Encode()))
 	var r *http.Request
 	r, _ = http.NewRequest("POST", apiRoot+"/sms/json", valuesReader)
@@ -174,11 +176,10 @@ func (c *SMS) Send(msg *SMSMessage) (*MessageResponse, error) {
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := client.Do(r)
-	defer resp.Body.Close()
-
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
