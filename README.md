@@ -1,5 +1,7 @@
 # gonexmo [![GoDoc](https://godoc.org/github.com/njern/gonexmo?status.png)](https://godoc.org/github.com/njern/gonexmo)
 
+This is my fork of gonexmo that works with Appengine. This is a "scratch-my-own-itch" project and is not by any means complete or supported. Currently only SMS is supported.
+
 gonexmo is a [Go](http://golang.org/) library tailored for sending SMS's with 
 [Nexmo](https://www.nexmo.com/).
 
